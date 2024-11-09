@@ -3,7 +3,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt-auth.strategy';
-import { AuthModule } from '../auth/auth.module';  // Importa AuthModule para acceder a AuthService
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -12,13 +12,13 @@ import { AuthModule } from '../auth/auth.module';  // Importa AuthModule para ac
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),  // Clave secreta para firmar los JWT
-        signOptions: { expiresIn: '60m' },  // Tiempo de expiración del token
+        secret: configService.get('JWT_SECRET'),  
+        signOptions: { expiresIn: '60m' },
       }),
     }),
-    forwardRef(() => AuthModule),  // Usa forwardRef para evitar dependencias circulares
+    forwardRef(() => AuthModule),
   ],
-  providers: [JwtStrategy],  // Se asegura de que la estrategia se registre aquí
-  exports: [JwtStrategy],    // Exporta para ser utilizada en otros módulos
+  providers: [JwtStrategy],
+  exports: [JwtStrategy],
 })
 export class JwtAuthModule {}
