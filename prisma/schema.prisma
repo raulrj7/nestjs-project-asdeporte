@@ -22,7 +22,8 @@ model User {
 model Task {
   id          Int      @id @default(autoincrement())
   title       String
-  dueDate     DateTime
+  dueDate     DateTime?
   description String
-  status      Status
+  status      Status?
+  userId    Int? 
 }

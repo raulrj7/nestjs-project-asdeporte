@@ -1,54 +1,56 @@
-// task.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  HttpStatus,
-  HttpCode,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
 
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  @UseGuards(JwtAuthGuard)  // Usa el guard en el método POST
-  create(@Body() createTaskDto: CreateTaskDto) {
+  async create(@Body() createTaskDto: CreateTaskDto, @Req() req) {
+    const userId = req.user.id;
     console.log(createTaskDto);
-    return this.taskService.create(createTaskDto);
+    
+    return this.taskService.create(createTaskDto, userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  @UseGuards(JwtAuthGuard)  // Usa el guard en el método GET
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    return this.taskService.findAll({ page, limit });
+  async findAll(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+    @Req() req
+  ) {
+    const userId = req.user.id;
+    return this.taskService.findAll(
+      { page: Number(page) || 1, limit: Number(limit) || 10 },
+      userId
+    );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  @UseGuards(JwtAuthGuard)  // Usa el guard en el método GET para un ID específico
-  findOne(@Param('id') id: number) {
-    return this.taskService.findOne(id);
+  async findOne(@Param('id') id: number, @Req() req) {
+    const userId = req.user.id;
+    return this.taskService.findOne(Number(id), userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  @UseGuards(JwtAuthGuard)  // Usa el guard en el método PUT
-  update(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(id, updateTaskDto);
+  async update(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto, @Req() req) {
+    const userId = req.user.id;
+    return this.taskService.update(Number(id), updateTaskDto, userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)  // Usa el guard en el método DELETE
-  remove(@Param('id') id: number) {
-    return this.taskService.remove(id);
+  async remove(@Param('id') id: number, @Req() req) {
+    const userId = req.user.id;
+    return this.taskService.remove(Number(id), userId);
   }
 }
+
+

@@ -13,13 +13,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private configService: ConfigService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),  // Extrae el token del encabezado de autorización
-      secretOrKey: configService.get('JWT_SECRET'),  // Usa la clave secreta configurada en el .env
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: configService.get('JWT_SECRET'),
     });
   }
 
   async validate(payload: JwtPayload) {
-    // Aquí puedes agregar lógica para verificar si el usuario existe, etc.
     return this.authService.validateUser(payload.userId);
   }
 }

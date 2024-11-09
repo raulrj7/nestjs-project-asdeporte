@@ -1,4 +1,3 @@
-// jwt-auth.module.ts
 import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -11,10 +10,20 @@ import { AuthModule } from '../auth/auth.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),  
-        signOptions: { expiresIn: '60m' },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const jwtSecret = configService.get('JWT_SECRET');
+        
+        if (!jwtSecret) {
+          throw new Error('JWT_SECRET is not defined in the environment variables');
+        }
+        
+        console.log('JWT_SECRET**********************:', jwtSecret);  // Verifica que el valor sea correcto
+        
+        return {
+          secret: jwtSecret,
+          signOptions: { expiresIn: '60m' },
+        };
+      },
     }),
     forwardRef(() => AuthModule),
   ],
