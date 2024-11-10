@@ -20,6 +20,8 @@ async function bootstrap() {
   // Agregar endpoint para descargar el JSON de Swagger
   app.use('/swagger-json', (req, res) => res.json(document));
 
+  app.setGlobalPrefix('api');
+
   app.enableCors();
 
   // Configuración de ValidationPipe
