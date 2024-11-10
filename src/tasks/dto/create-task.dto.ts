@@ -22,7 +22,7 @@ export class CreateTaskDto {
   @ApiProperty({ description: 'The due date of the task', required: false })
   @IsOptional()
   @IsDateString()
-  dueDate?: string;
+  dueDate?: Date;
 
   @ApiProperty({
     description: 'The status of the task',
