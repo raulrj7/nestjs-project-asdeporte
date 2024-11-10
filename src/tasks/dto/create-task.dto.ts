@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, IsDateString, IsEnum, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export enum Status {
   PENDING = 'PENDING',
@@ -8,20 +9,29 @@ export enum Status {
 }
 
 export class CreateTaskDto {
+  @ApiProperty({ description: 'The title of the task' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
+  @ApiProperty({ description: 'The description of the task' })
   @IsString()
   @IsNotEmpty()
   description: string;
 
-  @IsOptional() // Hacemos que dueDate sea opcional
+  @ApiProperty({ description: 'The due date of the task', required: false })
+  @IsOptional()
   @IsDateString()
-  dueDate?: string; // Puede ser undefined si no se pasa
+  dueDate?: string;
 
+  @ApiProperty({
+    description: 'The status of the task',
+    enum: Status,
+    enumName: 'Status',
+    default: Status.PENDING,
+  })
   @IsEnum(Status)
-  @IsOptional() // status es opcional, pero si no se pasa, se asignará "PENDING"
-  @Transform(({ value }) => value ?? Status.PENDING) // Asigna el valor "PENDING" si no se pasa
+  @IsOptional()
+  @Transform(({ value }) => value ?? Status.PENDING)
   status: Status;
 }

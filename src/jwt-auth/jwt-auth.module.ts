@@ -17,8 +17,6 @@ import { AuthModule } from '../auth/auth.module';
           throw new Error('JWT_SECRET is not defined in the environment variables');
         }
         
-        console.log('JWT_SECRET**********************:', jwtSecret);  // Verifica que el valor sea correcto
-        
         return {
           secret: jwtSecret,
           signOptions: { expiresIn: '60m' },
