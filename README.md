@@ -36,7 +36,7 @@ Esta guía asume que no tienes ningún software instalado en tu Mac. Sigue los p
    ```
 
 3. **Configurar variables de entorno**:
-   Crea un archivo `.env` en la raíz del proyecto con las siguientes variables.
+   Crea un archivo `.env` en la raíz del proyecto con las siguientes variables, agregar los valores proporcionados.
 
    ```dotenv
     DATABASE_URL=
