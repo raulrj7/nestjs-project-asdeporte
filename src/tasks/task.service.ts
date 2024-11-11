@@ -84,33 +84,44 @@ export class TaskService {
     if (!task || task.userId !== userId) {
       throw new NotFoundException('Task not found or unauthorized');
     }
-
+    const updateData: any = {};
+  
+    if (updateTaskDto.title !== undefined) {
+      updateData.title = updateTaskDto.title;
+    }
+    if (updateTaskDto.description !== undefined) {
+      updateData.description = updateTaskDto.description;
+    }
+    if (updateTaskDto.dueDate !== undefined) {
+      updateData.dueDate = updateTaskDto.dueDate ? new Date(updateTaskDto.dueDate) : null;
+    }
+    if (updateTaskDto.status !== undefined) {
+      updateData.status = updateTaskDto.status;
+    }
+  
     const updatedTask = await this.prisma.task.update({
       where: { id },
-      data: {
-        title: updateTaskDto.title,
-        description: updateTaskDto.description,
-        dueDate: new Date(updateTaskDto.dueDate),
-        status: updateTaskDto.status as Status,
-      },
+      data: updateData,
     });
-
+  
     return this.mapToTaskResponse(updatedTask);
   }
+  
 
-  async remove(taskId: number, userId: number): Promise<TaskResponse> {
+  async remove(taskId: number, userId: number): Promise<{ message: string }> {
     const task = await this.prisma.task.findUnique({
       where: { id: taskId },
     });
-
+  
     if (!task || task.userId !== userId) {
       throw new NotFoundException('Task not found or unauthorized');
     }
-
-    const deletedTask = await this.prisma.task.delete({
+  
+    await this.prisma.task.delete({
       where: { id: taskId },
     });
-
-    return this.mapToTaskResponse(deletedTask);
-  }
+  
+    return { message: 'Task successfully deleted' };
+  }  
+  
 }

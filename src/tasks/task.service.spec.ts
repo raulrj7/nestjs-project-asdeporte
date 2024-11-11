@@ -155,7 +155,7 @@ describe('TaskService', () => {
   });
 
   describe('remove', () => {
-    it('should remove and return a task', async () => {
+    it('should remove a task and return a confirmation message', async () => {
       const mockTask = { 
         id: 1, 
         title: 'Task 1', 
@@ -169,8 +169,7 @@ describe('TaskService', () => {
 
       const result = await taskService.remove(1, 1);
       expect(result).toEqual({
-        ...mockTask,
-        dueDate: mockTask.dueDate.toISOString(),
+        message: 'Task successfully deleted',
       });
     });
   });
