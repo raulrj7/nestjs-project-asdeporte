@@ -39,9 +39,9 @@ Esta guía asume que no tienes ningún software instalado en tu Mac. Sigue los p
    Crea un archivo `.env` en la raíz del proyecto con las siguientes variables.
 
    ```dotenv
-    DATABASE_URL="postgresql://postgres:45D3p0rT3D3v@database-1.cdo40c22ycbr.us-east-2.rds.amazonaws.com:5432/asdeporte?schema=asdeporte"
+    DATABASE_URL=
     PORT=3000
-    JWT_SECRET=mySecretKey
+    JWT_SECRET=
    ```
 
 ## Iniciar la API

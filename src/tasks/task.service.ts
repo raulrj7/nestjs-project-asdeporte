@@ -4,6 +4,7 @@ import { CreateTaskDto, Status } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtService } from '@nestjs/jwt';
 import { TaskResponse } from './dto/task.response.dto';
+import { PaginationDto } from "./dto/pagination.dto";
 
 @Injectable()
 export class TaskService {
@@ -39,25 +40,22 @@ export class TaskService {
     };
   }
 
-  async findAll({ page = 1, limit = 10 }: { page: number; limit: number }, userId: number): Promise<{ data: TaskResponse[]; meta: any }> {
+  async findAll(paginationDto: PaginationDto, userId: number): Promise<{ data: TaskResponse[]; meta: any }> {
+    const { page, limit } = paginationDto;
     const skip = (page - 1) * limit;
-
-    if (isNaN(skip) || isNaN(limit)) {
-      throw new Error("Los parámetros 'page' y 'limit' deben ser números.");
-    }
-
+  
     const tasks = await this.prisma.task.findMany({
       skip,
       take: limit,
       where: { userId },
     });
-
+  
     const totalCount = await this.prisma.task.count({
       where: { userId },
     });
-
+  
     const totalPages = Math.ceil(totalCount / limit);
-
+  
     return {
       data: tasks.map(this.mapToTaskResponse),
       meta: {

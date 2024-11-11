@@ -14,9 +14,10 @@ enum Status {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
   password String
+  tasks    Task[]  // Relación con el modelo Task
 }
 
 model Task {
@@ -24,6 +25,7 @@ model Task {
   title       String
   dueDate     DateTime?
   description String
-  status      Status?
-  userId    Int? 
+  status      Status   @default(PENDING) // Valor por defecto
+  userId      Int      // Campo userId para la relación con User
+  user        User     @relation(fields: [userId], references: [id]) // Relación con User
 }

@@ -22,6 +22,7 @@ import {
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { PaginationDto } from './dto/pagination.dto'; // Importa el DTO de paginación
 import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
 
 @ApiTags('tasks')
@@ -50,20 +51,11 @@ export class TaskController {
     summary: 'Get all tasks with pagination',
     description: 'Requires a Bearer token in the Authorization header to retrieve tasks.',
   })
-  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
-  @ApiQuery({ name: 'limit', required: false, description: 'Number of items per page' })
   @ApiResponse({ status: 200, description: 'Tasks retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll(
-    @Query('page') page: string,
-    @Query('limit') limit: string,
-    @Req() req,
-  ) {
+  async findAll(@Query() paginationDto: PaginationDto, @Req() req) {
     const userId = req.user.id;
-    return this.taskService.findAll(
-      { page: Number(page) || 1, limit: Number(limit) || 10 },
-      userId,
-    );
+    return this.taskService.findAll(paginationDto, userId);
   }
 
   @UseGuards(JwtAuthGuard)

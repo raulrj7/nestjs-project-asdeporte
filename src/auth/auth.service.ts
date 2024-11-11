@@ -64,20 +64,24 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto): Promise<LoginResponse> {
     const email = loginUserDto.email.toLowerCase();
-
+  
     const user = await this.findUserByEmail(email);
-
-    if (!user || !(await bcrypt.compare(loginUserDto.password, user.password))) {
+    if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
+  
+    const isPasswordValid = await bcrypt.compare(loginUserDto.password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+  
     const jwtSecret = this.configService.get('JWT_SECRET');
-    
     if (!jwtSecret) {
       throw new InternalServerErrorException('JWT_SECRET is not defined in the environment variables');
     }
-
+  
     const token = this.jwtService.sign({ userId: user.id }, { secret: jwtSecret });
     return { accessToken: token };
   }
+  
 }
